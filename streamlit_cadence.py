@@ -299,7 +299,6 @@ def text_report(df_selected_week):
     topSong=df_selected_week['song'].value_counts().head(1)
     topSong=topSong.to_string()
     durry=df_selected_week['duration'].sum()//60
-    durry=durry.round()
     st.markdown(f"{place_frag} {week_frag} acessed by {u_unique} unique users. Their combined listening duration {is_was} {durry} hours")
 
 ################################################################################
@@ -323,8 +322,9 @@ with col[0]:
         paidlev=df_selected_week.drop_duplicates(subset=['userId'])
         paidlev=paidlev.groupby('week')['level'].value_counts()
         paidlev=paidlev.reset_index()
-        paidlev.columns = ['Week', 'Level', 'Count']
-        st.dataframe(paidlev.set_index(paidlev.columns[0]))
+        paidpiv=paidlev.pivot(index='week', columns='level', values='count')
+        paidpiv.columns = ['Free', 'Paid']
+        st.dataframe(paidpiv)
             
 
 ######################################### DEVICES
@@ -366,7 +366,9 @@ with col[1]:
     ###### Step two: Now that userId is taken care of, we can agg between just week and gender
         gender_dfsum = gender_dfsum.groupby('week')['gender'].value_counts()
         gender_dfsum=gender_dfsum.reset_index()
-        st.dataframe(gender_dfsum.set_index(gender_dfsum.columns[0]),use_container_width=True)
+        genpiv=gender_dfsum.pivot(index='week', columns='gender', values='count')
+        genpiv.columns = ['Female', 'Male','Other']
+        st.dataframe(genpiv,use_container_width=True)
 ##### (TBA)
 
 ##########################################################################    
